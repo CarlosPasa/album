@@ -94,18 +94,38 @@ async function idbListPhotos() {
 }
 
 async function render() {
-  grid.innerHTML = "";
-  const items = await idbListPhotos();
-  empty.style.display = items.length ? "none" : "block";
+  setBusy(true);
+  try {
+    grid.innerHTML = "";
+    const items = await idbListPhotos();
+    empty.style.display = items.length ? "none" : "block";
 
-  for (const it of items) {
-    const card = document.createElement("div");
-    card.className = "card";
-    const img = document.createElement("img");
-    img.loading = "lazy";
-    img.src = it.url;
-    card.appendChild(img);
-    grid.appendChild(card);
+    // Promesas para esperar carga real de imágenes
+    const loadPromises = [];
+
+    for (const it of items) {
+      const card = document.createElement("div");
+      card.className = "card";
+
+      const img = document.createElement("img");
+      img.loading = "lazy";
+
+      // Espera a que cargue o falle (para no quedarte colgado)
+      loadPromises.push(new Promise((resolve) => {
+        img.onload = () => resolve(true);
+        img.onerror = () => resolve(false);
+      }));
+
+      img.src = it.url;
+
+      card.appendChild(img);
+      grid.appendChild(card);
+    }
+
+    // Espera que terminen todas (carguen o fallen)
+    await Promise.all(loadPromises);
+  } finally {
+    setBusy(false);
   }
 }
 
