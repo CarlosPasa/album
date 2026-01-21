@@ -163,20 +163,6 @@ btnSnap.onclick = async () => {
   }
 };
 
-filePick.onchange = async () => {
-  const f = filePick.files?.[0];
-  if (!f) return;
-
-  try {
-    await uploadAndRefresh(f, f.name || `upload_${Date.now()}.jpg`);
-  } catch (e) {
-    alert(e.message);
-    setBusy(false);
-  } finally {
-    filePick.value = "";
-  }
-};
-
 function setBusy(busy) {
   btnReload.disabled = busy;
 
