@@ -1,7 +1,7 @@
 // === CONFIG ===
 // Pon aquí la URL base de tu backend InfinityFree
-const API_BASE = "https://album-boda.free.nf/api";
-// const API_BASE = "http://localhost/photos/backend/api";
+// const API_BASE = "https://album-boda.free.nf/api";
+const API_BASE = "http://localhost/photos/backend/api";
 
 // Identificador simple por dispositivo (si luego haces login, esto se reemplaza)
 let userKey = localStorage.getItem("album_user_key");
