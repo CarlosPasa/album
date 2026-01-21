@@ -10,7 +10,6 @@ const cameraRow = document.getElementById("cameraRow");
 const canvas = document.getElementById("canvas");
 
 const btnReload = document.getElementById("btnReload");
-const btnUpload = document.getElementById("btnUpload");
 const filePick = document.getElementById("filePick");
 
 const btnClose = document.getElementById("btnClose");
@@ -164,8 +163,6 @@ btnSnap.onclick = async () => {
   }
 };
 
-btnUpload.onclick = () => filePick.click();
-
 filePick.onchange = async () => {
   const f = filePick.files?.[0];
   if (!f) return;
@@ -186,9 +183,6 @@ function setBusy(busy) {
   // botones nuevos
   btnOpenGallery.disabled = busy;
   btnOpenCamera.disabled = busy;
-
-  // si aún usas el botón Upload viejo
-  btnUpload.disabled = busy;
 
   btnSnap && (btnSnap.disabled = busy);
   btnClose && (btnClose.disabled = busy);
