@@ -28,12 +28,15 @@ btnOpenCamera.onclick = () => fileCamera.click();
 
 async function handlePickedFile(file) {
   if (!file) return;
+  setBusy(true);
   try {
     const url = await uploadToRender(file, file.name || `upload_${Date.now()}.jpg`);
     await idbAddPhoto(url);
     await render();
   } catch (e) {
     alert(e.message);
+  } finally {
+    setBusy(false);
   }
 }
 
