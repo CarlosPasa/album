@@ -1,5 +1,6 @@
 // === Config ===
-const API_UPLOAD = "https://backend-album.onrender.com//upload"; // <-- cambia esto
+const API_BASE = "https://backend-album.onrender.com"; // SIN slash al final
+const API_UPLOAD = `${API_BASE}/upload`;
 
 // === UI ===
 const grid = document.getElementById("grid");
