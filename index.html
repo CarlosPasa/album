@@ -43,8 +43,13 @@
 <div class="fabbar">
   <div class="bar">
     <button id="btnReload">Refrescar</button>
-    <button id="btnCamera" class="primary">📷 Cámara</button>
-    <input id="filePick" type="file" accept="image/*" capture="environment" style="display:none" />
+    <button id="btnOpenCamera" class="primary">📷 Cámara</button>
+    <button id="btnOpenGallery">🖼️ Galería</button>
+    <!-- GALERÍA (sin capture) -->
+    <input id="fileGallery" type="file" accept="image/*" style="display:none" />
+
+    <!-- CÁMARA (con capture) -->
+    <input id="fileCamera" type="file" accept="image/*" capture="environment" style="display:none" />
     <button id="btnUpload">Subir</button>
   </div>
 </div>

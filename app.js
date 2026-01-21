@@ -17,6 +17,40 @@ const filePick = document.getElementById("filePick");
 const btnClose = document.getElementById("btnClose");
 const btnSnap = document.getElementById("btnSnap");
 
+const btnOpenGallery = document.getElementById("btnOpenGallery");
+const btnOpenCamera  = document.getElementById("btnOpenCamera");
+const fileGallery = document.getElementById("fileGallery");
+const fileCamera  = document.getElementById("fileCamera");
+
+// Abre galería
+btnOpenGallery.onclick = () => fileGallery.click();
+
+// Abre cámara (selector del sistema)
+btnOpenCamera.onclick = () => fileCamera.click();
+
+async function handlePickedFile(file) {
+  if (!file) return;
+  try {
+    const url = await uploadToRender(file, file.name || `upload_${Date.now()}.jpg`);
+    await idbAddPhoto(url);
+    await render();
+  } catch (e) {
+    alert(e.message);
+  }
+}
+
+fileGallery.onchange = () => {
+  const f = fileGallery.files?.[0];
+  fileGallery.value = "";
+  handlePickedFile(f);
+};
+
+fileCamera.onchange = () => {
+  const f = fileCamera.files?.[0];
+  fileCamera.value = "";
+  handlePickedFile(f);
+};
+
 let stream = null;
 
 // ===== IndexedDB (guardamos {url, ts}) =====
