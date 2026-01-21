@@ -134,7 +134,7 @@ async function captureBlob() {
   if (!w || !h) throw new Error("La cámara aún no está lista.");
   canvas.width = w; canvas.height = h;
   canvas.getContext("2d").drawImage(video, 0, 0, w, h);
-  const blob = await new Promise(res => canvas.toBlob(res, "image/jpeg", 0.9));
+  const blob = await new Promise(res => canvas.toBlob(res, "image/jpeg", 1.0));
   if (!blob) throw new Error("No se pudo capturar.");
   return blob;
 }
@@ -161,7 +161,7 @@ btnClose.onclick = closeCamera;
 btnSnap.onclick = async () => {
   try {
     const blob = await captureBlob();
-    const url = await uploadToRender(blob, `camera_${Date.now()}.jpg`);
+    const url = await uploadAndRefresh(blob, `camera_${Date.now()}.jpg`);
     await idbAddPhoto(url);
     closeCamera();
     await render();
@@ -176,7 +176,7 @@ filePick.onchange = async () => {
   const f = filePick.files?.[0];
   if (!f) return;
   try {
-    const url = await uploadToRender(f, f.name || `upload_${Date.now()}.jpg`);
+    const url = await uploadAndRefresh(f, f.name || `upload_${Date.now()}.jpg`);
     await idbAddPhoto(url);
     await render();
   } catch (e) {
@@ -186,6 +186,29 @@ filePick.onchange = async () => {
   }
 };
 
-btnReload.onclick = render;
+function setBusy(busy) {
+  btnReload.disabled = busy;
+  btnCamera.disabled = busy;
+  btnUpload.disabled = busy;
+  btnSnap && (btnSnap.disabled = busy);
+  btnClose && (btnClose.disabled = busy);
+}
+
+async function uploadAndRefresh(fileOrBlob, name) {
+  setBusy(true);
+  try {
+    const url = await uploadToRender(fileOrBlob, name);
+    await idbAddPhoto(url);
+    await render(); // recarga galería
+  } finally {
+    setBusy(false);
+  }
+}
+
+btnReload.onclick = async () => {
+  setBusy(true);
+  try { await render(); }
+  finally { setBusy(false); }
+};
 
 render();
