@@ -10,7 +10,6 @@ const cameraRow = document.getElementById("cameraRow");
 const canvas = document.getElementById("canvas");
 
 const btnReload = document.getElementById("btnReload");
-const btnCamera = document.getElementById("btnCamera");
 const btnUpload = document.getElementById("btnUpload");
 const filePick = document.getElementById("filePick");
 
@@ -151,22 +150,17 @@ async function uploadToRender(fileOrBlob, filename="photo.jpg") {
 }
 
 // ===== Eventos =====
-btnCamera.onclick = async () => {
-  try { await openCamera(); }
-  catch (e) { alert("No se pudo abrir la cámara: " + e.message); }
-};
 
 btnClose.onclick = closeCamera;
 
 btnSnap.onclick = async () => {
   try {
     const blob = await captureBlob();
-    const url = await uploadAndRefresh(blob, `camera_${Date.now()}.jpg`);
-    await idbAddPhoto(url);
+    await uploadAndRefresh(blob, `camera_${Date.now()}.jpg`);
     closeCamera();
-    await render();
   } catch (e) {
     alert(e.message);
+    setBusy(false);
   }
 };
 
@@ -175,12 +169,12 @@ btnUpload.onclick = () => filePick.click();
 filePick.onchange = async () => {
   const f = filePick.files?.[0];
   if (!f) return;
+
   try {
-    const url = await uploadAndRefresh(f, f.name || `upload_${Date.now()}.jpg`);
-    await idbAddPhoto(url);
-    await render();
+    await uploadAndRefresh(f, f.name || `upload_${Date.now()}.jpg`);
   } catch (e) {
     alert(e.message);
+    setBusy(false);
   } finally {
     filePick.value = "";
   }
@@ -188,11 +182,23 @@ filePick.onchange = async () => {
 
 function setBusy(busy) {
   btnReload.disabled = busy;
-  btnCamera.disabled = busy;
+
+  // botones nuevos
+  btnOpenGallery.disabled = busy;
+  btnOpenCamera.disabled = busy;
+
+  // si aún usas el botón Upload viejo
   btnUpload.disabled = busy;
+
   btnSnap && (btnSnap.disabled = busy);
   btnClose && (btnClose.disabled = busy);
+
+  // también deshabilita inputs para evitar doble click
+  fileGallery.disabled = busy;
+  fileCamera.disabled = busy;
+  filePick && (filePick.disabled = busy);
 }
+
 
 async function uploadAndRefresh(fileOrBlob, name) {
   setBusy(true);
